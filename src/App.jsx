@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -78,6 +78,8 @@ const GPACalculator = () => {
     const isValid = courses.every(course => !course.required || course.grade);
     if (isValid) {
       setShowResults(true);
+      // Scroll to top smoothly
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -94,65 +96,7 @@ const GPACalculator = () => {
           <CardTitle className="text-2xl font-bold text-center">BS RIS GPA CALCULATOR</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="mb-6">
-            <Label>Select Semester</Label>
-            <Select value={selectedSemester} onValueChange={handleSemesterChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Choose semester" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="1">Semester 1</SelectItem>
-                <SelectItem value="2">Semester 2</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {selectedSemester && !showResults && (
-            <div className="space-y-6">
-              {courses.map((course, index) => (
-                <div key={index} className="p-4 border rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
-                    <div className="col-span-2">
-                      <div className="font-medium">
-                        {course.name}
-                        {!course.required && <span className="text-gray-500 text-sm ml-2">(Optional)</span>}
-                      </div>
-                      <div className="text-sm text-gray-600">{course.code}</div>
-                    </div>
-                    <div className="text-sm text-gray-600">
-                      Credits: {course.creditHours}
-                    </div>
-                    <div>
-                      <Select
-                        value={course.grade}
-                        onValueChange={(value) => handleCourseUpdate(index, value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder={course.required ? "Select grade" : "Optional grade"} />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.keys(gradeScale).map((grade) => (
-                            <SelectItem key={grade} value={grade}>
-                              {grade}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <Button 
-                onClick={handleCalculate}
-                className="w-full"
-                disabled={!courses.every(course => !course.required || course.grade)}
-              >
-                Calculate GPA
-              </Button>
-            </div>
-          )}
-
-          {showResults && (
+          {showResults ? (
             <div className="space-y-6">
               <div className="text-center space-y-4">
                 <h3 className="text-xl font-semibold">Your GPA for Semester {selectedSemester}</h3>
@@ -163,15 +107,19 @@ const GPACalculator = () => {
               <div className="space-y-4">
                 <h4 className="font-semibold">Course Breakdown:</h4>
                 {courses.filter(course => course.grade).map((course, index) => (
-                  <div key={index} className="p-3 bg-gray-50 rounded space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <span className="font-medium">{course.name}</span>
-                        <span className="text-sm text-gray-600 ml-2">({course.code})</span>
+                  <div key={index} className="p-4 bg-gray-50 rounded-lg space-y-2">
+                    <div className="flex flex-col space-y-1">
+                      <div className="font-medium text-base">
+                        {course.name}
                       </div>
-                      <span className="text-sm text-gray-600">
-                        {course.creditHours} credits - Grade: {course.grade}
-                      </span>
+                      <div className="text-sm text-gray-600 flex items-center space-x-2">
+                        <span>{course.code}</span>
+                        <span>•</span>
+                        <span>{course.creditHours} credits</span>
+                      </div>
+                      <div className="text-sm font-medium text-blue-600">
+                        Grade: {course.grade}
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -184,8 +132,77 @@ const GPACalculator = () => {
                 Calculate Another GPA
               </Button>
             </div>
+          ) : (
+            <>
+              <div className="mb-6">
+                <Label>Select Semester</Label>
+                <Select value={selectedSemester} onValueChange={handleSemesterChange}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Choose semester" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1">Semester 1</SelectItem>
+                    <SelectItem value="2">Semester 2</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {selectedSemester && (
+                <div className="space-y-6">
+                  {courses.map((course, index) => (
+                    <div key={index} className="p-4 border rounded-lg">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+                        <div className="col-span-2">
+                          <div className="font-medium">
+                            {course.name}
+                            {!course.required && <span className="text-gray-500 text-sm ml-2">(Optional)</span>}
+                          </div>
+                          <div className="text-sm text-gray-600">{course.code}</div>
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Credits: {course.creditHours}
+                        </div>
+                        <div>
+                          <Select
+                            value={course.grade}
+                            onValueChange={(value) => handleCourseUpdate(index, value)}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder={course.required ? "Select grade" : "Optional grade"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {Object.keys(gradeScale).map((grade) => (
+                                <SelectItem key={grade} value={grade}>
+                                  {grade}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <Button 
+                    onClick={handleCalculate}
+                    className="w-full"
+                    disabled={!courses.every(course => !course.required || course.grade)}
+                  >
+                    Calculate GPA
+                  </Button>
+                </div>
+              )}
+            </>
           )}
         </CardContent>
+        <CardFooter className="flex flex-col space-y-2 text-sm text-gray-500 border-t pt-4">
+          <div className="text-center">
+            Developed by{' '}
+            <span className="font-medium text-gray-700">Syed Hamza Qadri</span>
+          </div>
+          <div className="text-center text-xs">
+            Based on BUKC Grade System
+          </div>
+        </CardFooter>
       </Card>
     </div>
   );
