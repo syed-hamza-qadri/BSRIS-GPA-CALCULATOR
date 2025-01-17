@@ -14,7 +14,8 @@ const GPACalculator = () => {
     { name: 'Islamic Studies', code: 'ISL 101', creditHours: '2', grade: '', required: true },
     { name: 'Tajweed', code: 'ISL 107', creditHours: '0', grade: '', required: false },
     { name: 'Applied Physics', code: 'GSC 114', creditHours: '2', grade: '', required: true },
-    { name: 'Engineering Drawing and CAD', code: 'EEL 121', creditHours: '1', grade: '', required: true }
+    { name: 'Engineering Drawing and CAD', code: 'EEL 121', creditHours: '1', grade: '', required: true },
+    { name: 'Fundamentals of Mathematics-I', code: 'GSC 103', creditHours: '0', grade: '', required: false },
   ];
 
   const semester2Courses = [
@@ -26,7 +27,8 @@ const GPACalculator = () => {
     { name: 'Engineering Mechanics', code: 'MSC 231', creditHours: '3', grade: '', required: true },
     { name: 'Entrepreneurship', code: 'HSS 423', creditHours: '2', grade: '', required: true },
     { name: 'Linear Algebra & Differential Equations', code: 'GSC 123', creditHours: '3', grade: '', required: true },
-    { name: 'Understanding Quran-I', code: 'ISL 108', creditHours: '0', grade: '', required: false }
+    { name: 'Understanding Quran-I', code: 'ISL 108', creditHours: '0', grade: '', required: false },
+    { name: 'Fundamentals of Mathematics-II', code: 'GSC 104', creditHours: '0', grade: '', required: false }
   ];
 
   const [selectedSemester, setSelectedSemester] = useState('');
