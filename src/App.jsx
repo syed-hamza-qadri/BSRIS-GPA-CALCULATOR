@@ -7,14 +7,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const GPACalculator = () => {
   const semester1Courses = [
     { name: 'Applied Calculus and Analytical Geometry', code: 'GSC 110', creditHours: '3', grade: '', required: true },
+    { name: 'Applied Physics', code: 'GSC 114', creditHours: '2', grade: '', required: true },
     { name: 'Applied Physics Lab', code: 'GSL 113', creditHours: '1', grade: '', required: true },
     { name: 'Computing Fundamentals', code: 'CSC 110', creditHours: '2', grade: '', required: true },
     { name: 'Computing Fundamentals Lab', code: 'CSL 110', creditHours: '1', grade: '', required: true },
     { name: 'Functional English', code: 'ENG 101', creditHours: '3', grade: '', required: true },
     { name: 'Islamic Studies', code: 'ISL 101', creditHours: '2', grade: '', required: true },
-    { name: 'Tajweed', code: 'ISL 107', creditHours: '0', grade: '', required: false },
-    { name: 'Applied Physics', code: 'GSC 114', creditHours: '2', grade: '', required: true },
     { name: 'Engineering Drawing and CAD', code: 'EEL 121', creditHours: '1', grade: '', required: true },
+    { name: 'Tajweed', code: 'ISL 107', creditHours: '0', grade: '', required: false },
     { name: 'Fundamentals of Mathematics-I', code: 'GSC 103', creditHours: '0', grade: '', required: false },
   ];
 
@@ -29,6 +29,19 @@ const GPACalculator = () => {
     { name: 'Linear Algebra & Differential Equations', code: 'GSC 123', creditHours: '3', grade: '', required: true },
     { name: 'Understanding Quran-I', code: 'ISL 108', creditHours: '0', grade: '', required: false },
     { name: 'Fundamentals of Mathematics-II', code: 'GSC 104', creditHours: '0', grade: '', required: false }
+  ];
+
+  const semester3Courses = [
+    { name: 'Digital Logic Design', code: 'CEN 120', creditHours: '3', grade: '', required: true },
+    { name: 'Digital Logic Design Lab', code: 'CEN 120L', creditHours: '1', grade: '', required: true },
+    { name: 'Object Oriented Programming', code: 'CSC 210', creditHours: '3', grade: '', required: true },
+    { name: 'Object Oriented Programming Lab', code: 'CSC 210L', creditHours: '1', grade: '', required: true },
+    { name: 'Introduction to Robotics', code: 'RIS 231', creditHours: '3', grade: '', required: true },
+    { name: 'Introduction to Robotics Lab', code: 'RIS 231L', creditHours: '1', grade: '', required: true },
+    { name: 'Probability and Statistics', code: 'GSC 122', creditHours: '3', grade: '', required: true },
+    { name: 'Engineering Workshop', code: 'EEL 113', creditHours: '1', grade: '', required: true },
+    { name: 'Communication Skills', code: 'ENG 134', creditHours: '2', grade: '', required: true },
+    { name: 'Understanding Quran-II', code: 'ISL 109', creditHours: '0', grade: '', required: false }
   ];
 
   const [selectedSemester, setSelectedSemester] = useState('');
@@ -51,7 +64,19 @@ const GPACalculator = () => {
 
   const handleSemesterChange = (value) => {
     setSelectedSemester(value);
-    setCourses(value === '1' ? semester1Courses : semester2Courses);
+    switch(value) {
+      case '1':
+        setCourses(semester1Courses);
+        break;
+      case '2':
+        setCourses(semester2Courses);
+        break;
+      case '3':
+        setCourses(semester3Courses);
+        break;
+      default:
+        setCourses([]);
+    }
     setShowResults(false);
   };
 
@@ -80,7 +105,6 @@ const GPACalculator = () => {
     const isValid = courses.every(course => !course.required || course.grade);
     if (isValid) {
       setShowResults(true);
-      // Scroll to top smoothly
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -145,6 +169,7 @@ const GPACalculator = () => {
                   <SelectContent>
                     <SelectItem value="1">Semester 1</SelectItem>
                     <SelectItem value="2">Semester 2</SelectItem>
+                    <SelectItem value="3">Semester 3</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
