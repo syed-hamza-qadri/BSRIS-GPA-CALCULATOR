@@ -1,49 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Users, BarChart, Lock } from 'lucide-react';
-
 
 const GPACalculator = () => {
-  // State declarations
-  const [selectedSemester, setSelectedSemester] = useState('');
-  const [courses, setCourses] = useState([]);
-  const [showResults, setShowResults] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [showAdminPrompt, setShowAdminPrompt] = useState(false);
-  const [adminInput, setAdminInput] = useState('');
-  const [stats, setStats] = useState({
-    totalCalculations: 0,
-    semesterStats: {
-      '1': 0,
-      '2': 0,
-      '3': 0
-    },
-    averageGPA: 0,
-    totalUsers: 0,
-    lastUpdated: new Date().toISOString()
-  });
-
-  // Constants
-  const adminId = '036';
-  
-  const gradeScale = {
-    'A': 4.00,
-    'A-': 3.67,
-    'B+': 3.33,
-    'B': 3.00,
-    'B-': 2.67,
-    'C+': 2.33,
-    'C': 2.00,
-    'C-': 1.67,
-    'D+': 1.33,
-    'D': 1.00,
-    'F': 0.00
-  };
-
   const semester1Courses = [
     { name: 'Applied Calculus and Analytical Geometry', code: 'GSC 110', creditHours: '3', grade: '', required: true },
     { name: 'Applied Physics', code: 'GSC 114', creditHours: '2', grade: '', required: true },
@@ -54,7 +15,7 @@ const GPACalculator = () => {
     { name: 'Islamic Studies', code: 'ISL 101', creditHours: '2', grade: '', required: true },
     { name: 'Engineering Drawing and CAD', code: 'EEL 121', creditHours: '1', grade: '', required: true },
     { name: 'Tajweed', code: 'ISL 107', creditHours: '0', grade: '', required: false },
-    { name: 'Fundamentals of Mathematics-I', code: 'GSC 103', creditHours: '0', grade: '', required: false }
+    { name: 'Fundamentals of Mathematics-I', code: 'GSC 103', creditHours: '0', grade: '', required: false },
   ];
 
   const semester2Courses = [
@@ -83,40 +44,22 @@ const GPACalculator = () => {
     { name: 'Understanding Quran-II', code: 'ISL 109', creditHours: '0', grade: '', required: false }
   ];
 
-  // Effects
-  useEffect(() => {
-    const handleKeyPress = (event) => {
-      if (event.ctrlKey && event.shiftKey && event.key === 'A') {
-        setShowAdminPrompt(true);
-      }
-      if (event.key === 'Escape') {
-        setShowAdminPrompt(false);
-        setAdminInput('');
-      }
-    };
+  const [selectedSemester, setSelectedSemester] = useState('');
+  const [courses, setCourses] = useState([]);
+  const [showResults, setShowResults] = useState(false);
 
-    window.addEventListener('keydown', handleKeyPress);
-    return () => window.removeEventListener('keydown', handleKeyPress);
-  }, []);
-
-  useEffect(() => {
-    if (isAdmin) {
-      const savedStats = localStorage.getItem('gpaCalculatorStats');
-      if (savedStats) {
-        setStats(JSON.parse(savedStats));
-      }
-    }
-  }, [isAdmin]);
-
-  // Handlers
-  const handleAdminSubmit = () => {
-    if (adminInput === adminId) {
-      setIsAdmin(true);
-      setShowAdminPrompt(false);
-      setAdminInput('');
-    } else {
-      alert('Invalid admin ID');
-    }
+  const gradeScale = {
+    'A': 4.00,
+    'A-': 3.67,
+    'B+': 3.33,
+    'B': 3.00,
+    'B-': 2.67,
+    'C+': 2.33,
+    'C': 2.00,
+    'C-': 1.67,
+    'D+': 1.33,
+    'D': 1.00,
+    'F': 0.00
   };
 
   const handleSemesterChange = (value) => {
@@ -158,27 +101,9 @@ const GPACalculator = () => {
     return totalCredits === 0 ? 0 : (totalPoints / totalCredits).toFixed(2);
   };
 
-  const updateStats = (gpa) => {
-    const newStats = {
-      ...stats,
-      totalCalculations: stats.totalCalculations + 1,
-      semesterStats: {
-        ...stats.semesterStats,
-        [selectedSemester]: stats.semesterStats[selectedSemester] + 1
-      },
-      averageGPA: ((stats.averageGPA * stats.totalCalculations) + parseFloat(gpa)) / (stats.totalCalculations + 1),
-      totalUsers: stats.totalUsers + 1,
-      lastUpdated: new Date().toISOString()
-    };
-    setStats(newStats);
-    localStorage.setItem('gpaCalculatorStats', JSON.stringify(newStats));
-  };
-
   const handleCalculate = () => {
     const isValid = courses.every(course => !course.required || course.grade);
     if (isValid) {
-      const gpa = calculateGPA();
-      updateStats(gpa);
       setShowResults(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -192,70 +117,44 @@ const GPACalculator = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 flex items-center justify-center">
-      {showAdminPrompt && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h3 className="text-lg font-semibold mb-4">Admin Access</h3>
-            <input
-              type="password"
-              value={adminInput}
-              onChange={(e) => setAdminInput(e.target.value)}
-              placeholder="Enter admin ID"
-              className="w-full p-2 border rounded mb-4"
-              onKeyPress={(e) => e.key === 'Enter' && handleAdminSubmit()}
-            />
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowAdminPrompt(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleAdminSubmit}>
-                Submit
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-
       <Card className="w-full max-w-3xl">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">BS RIS GPA CALCULATOR</CardTitle>
-          {isAdmin && (
-            <div className="flex justify-center gap-4 mt-2">
-              <Badge variant="secondary" className="flex items-center gap-1">
-                <Users className="w-4 h-4" />
-                {stats.totalUsers} Users
-              </Badge>
-              <Badge variant="secondary" className="flex items-center gap-1">
-                <BarChart className="w-4 h-4" />
-                Avg GPA: {stats.averageGPA.toFixed(2)}
-              </Badge>
-            </div>
-          )}
         </CardHeader>
         <CardContent>
           {showResults ? (
             <div className="space-y-6">
               <div className="text-center space-y-4">
                 <h3 className="text-xl font-semibold">Your GPA for Semester {selectedSemester}</h3>
-                <div className="text-4xl font-bold text-blue-600">{calculateGPA()}</div>
+                <div className="text-4xl font-bold text-blue-600">
+                  {calculateGPA()}
+                </div>
               </div>
               <div className="space-y-4">
                 <h4 className="font-semibold">Course Breakdown:</h4>
                 {courses.filter(course => course.grade).map((course, index) => (
                   <div key={index} className="p-4 bg-gray-50 rounded-lg space-y-2">
                     <div className="flex flex-col space-y-1">
-                      <div className="font-medium text-base">{course.name}</div>
+                      <div className="font-medium text-base">
+                        {course.name}
+                      </div>
                       <div className="text-sm text-gray-600 flex items-center space-x-2">
                         <span>{course.code}</span>
                         <span>•</span>
                         <span>{course.creditHours} credits</span>
                       </div>
-                      <div className="text-sm font-medium text-blue-600">Grade: {course.grade}</div>
+                      <div className="text-sm font-medium text-blue-600">
+                        Grade: {course.grade}
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
-              <Button onClick={handleReset} className="w-full" variant="outline">
+              <Button 
+                onClick={handleReset}
+                className="w-full"
+                variant="outline"
+              >
                 Calculate Another GPA
               </Button>
             </div>
@@ -274,6 +173,7 @@ const GPACalculator = () => {
                   </SelectContent>
                 </Select>
               </div>
+
               {selectedSemester && (
                 <div className="space-y-6">
                   {courses.map((course, index) => (
@@ -286,7 +186,9 @@ const GPACalculator = () => {
                           </div>
                           <div className="text-sm text-gray-600">{course.code}</div>
                         </div>
-                        <div className="text-sm text-gray-600">Credits: {course.creditHours}</div>
+                        <div className="text-sm text-gray-600">
+                          Credits: {course.creditHours}
+                        </div>
                         <div>
                           <Select
                             value={course.grade}
@@ -297,7 +199,9 @@ const GPACalculator = () => {
                             </SelectTrigger>
                             <SelectContent>
                               {Object.keys(gradeScale).map((grade) => (
-                                <SelectItem key={grade} value={grade}>{grade}</SelectItem>
+                                <SelectItem key={grade} value={grade}>
+                                  {grade}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
@@ -318,26 +222,13 @@ const GPACalculator = () => {
           )}
         </CardContent>
         <CardFooter className="flex flex-col space-y-2 text-sm text-gray-500 border-t pt-4">
-          {isAdmin && (
-            <div className="w-full">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <h4 className="font-medium text-center">Admin Statistics</h4>
-                <Lock className="w-4 h-4" />
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-center">
-                {Object.entries(stats.semesterStats).map(([semester, count]) => (
-                  <div key={semester} className="p-2 bg-gray-50 rounded">
-                    <div className="font-medium">Semester {semester}</div>
-                    <div>{count} calculations</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
           <div className="text-center">
-            Developed by <span className="font-medium text-gray-700">Syed Hamza Qadri</span>
+            Developed by{' '}
+            <span className="font-medium text-gray-700">Syed Hamza Qadri</span>
           </div>
-          <div className="text-center text-xs">Based on BUKC Grade System</div>
+          <div className="text-center text-xs">
+            Based on BUKC Grade System
+          </div>
         </CardFooter>
       </Card>
     </div>
