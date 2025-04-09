@@ -44,6 +44,17 @@ const GPACalculator = () => {
     { name: 'Understanding Quran-II', code: 'ISL 109', creditHours: '0', grade: '', required: false }
   ];
 
+  const semester4Courses = [
+    { name: 'Complex Variable & Transforms', code: 'GSC 220', creditHours: '3', grade: '', required: true },
+    { name: 'Artificial Intelligence', code: 'AIC 201', creditHours: '3', grade: '', required: true },
+    { name: 'Artificial Intelligence Lab', code: 'AIL 201', creditHours: '1', grade: '', required: true },
+    { name: 'Pakistan Studies & Global Perspective', code: 'PAK 105', creditHours: '2', grade: '', required: true },
+    { name: 'Technical Writing & Presentation Skills', code: 'ENG 320', creditHours: '3', grade: '', required: true },
+    { name: 'Civics and Community Engagement', code: 'HSS 219', creditHours: '2', grade: '', required: true },
+    { name: 'Electronic Devices & Circuits', code: '', creditHours: '3', grade: '', required: true },
+    { name: 'Understanding Quran III', code: 'ISL 110', creditHours: '0', grade: '', required: false }
+  ];
+
   const [selectedSemester, setSelectedSemester] = useState('');
   const [courses, setCourses] = useState([]);
   const [showResults, setShowResults] = useState(false);
@@ -73,6 +84,9 @@ const GPACalculator = () => {
         break;
       case '3':
         setCourses(semester3Courses);
+        break;
+      case '4':
+        setCourses(semester4Courses);
         break;
       default:
         setCourses([]);
@@ -170,6 +184,7 @@ const GPACalculator = () => {
                     <SelectItem value="1">Semester 1</SelectItem>
                     <SelectItem value="2">Semester 2</SelectItem>
                     <SelectItem value="3">Semester 3</SelectItem>
+                    <SelectItem value="4">Semester 4</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
